@@ -3,7 +3,24 @@ const asyncHandler = require("../middleware/asyncHandler");
 const ErrorResponse = require("../utils/ErrorResponse");
 
 exports.getAllHotels = asyncHandler(async (req, res, next) => {
-  const hotels = await Hotel.find();
+  let reqQuery;
+  reqQuery = { ...req.query };
+
+  //FILTER THEN SORT
+  const removeBeforeFilter = ["sort"];
+  removeBeforeFilter.forEach((r) => delete reqQuery[r]);
+
+  let queryStr = JSON.stringify(reqQuery);
+
+  queryStr = queryStr.replace(
+    /\b(gt|gte|lt|lte|in)\b/g,
+    (match) => `$${match}`
+  );
+
+  console.log(queryStr);
+  query = JSON.parse(queryStr);
+
+  const hotels = await Hotel.find(query);
 
   res.status(200).json({
     success: true,
