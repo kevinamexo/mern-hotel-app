@@ -1,0 +1,11 @@
+.navbar{
+    padding: 20px 40px;
+    background-color:rgb(6, 36, 77);
+    height: 70px;
+    display:flex;
+    align-items: center;
+}
+
+.navbar h3{
+    color:#fff;
+}

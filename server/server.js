@@ -2,7 +2,7 @@ require("dotenv").config({ path: __dirname + "/config.env" });
 const express = require("express");
 const connectDB = require("./config/db");
 const cors = require("cors");
-const errorHandler = require("./utils/ErrorResponse");
+const errorHandler = require("./middleware/errorHandler");
 const PORT = process.env.PORT;
 
 connectDB();

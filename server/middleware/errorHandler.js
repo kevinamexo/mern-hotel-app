@@ -3,7 +3,6 @@ const ErrorResponse = require("../utils/ErrorResponse");
 const errorHandler = (err, req, res, next) => {
   let error;
   error = { ...err };
-  error.message = error.message;
 
   error.message = err.message;
   if (err.name === "CastError") {
@@ -20,7 +19,7 @@ const errorHandler = (err, req, res, next) => {
     const message = Object.values(err.errors)
       .map((error) => error.message)
       .join(", ");
-    error = newErrorResponse(message, 400);
+    error = new ErrorResponse(message, 400);
   }
 
   return res.status(error.status || 500).json({

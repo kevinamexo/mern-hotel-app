@@ -8,24 +8,43 @@ exports.getAllHotels = asyncHandler(async (req, res, next) => {
 
   //FILTER THEN SORT
   const removeBeforeFilter = ["sort"];
+  const filterKeys = ["price"];
   removeBeforeFilter.forEach((r) => delete reqQuery[r]);
 
-  let queryStr = JSON.stringify(reqQuery);
+  ///check if all filters are allowed
 
-  queryStr = queryStr.replace(
-    /\b(gt|gte|lt|lte|in)\b/g,
-    (match) => `$${match}`
-  );
+  console.log(reqQuery);
+  let queryKeys = Object.keys(reqQuery);
+  let invalidQueryKeys;
+  console.log(queryKeys);
 
-  console.log(queryStr);
-  query = JSON.parse(queryStr);
-
-  const hotels = await Hotel.find(query);
-
-  res.status(200).json({
-    success: true,
-    data: hotels,
+  queryKeys.forEach((q) => {
+    if (!filterKeys.includes(q)) {
+      invalidQueryKeys = true;
+    }
   });
+
+  if (invalidQueryKeys === true) {
+    return next(new ErrorResponse("Filter parameter Not found", 404));
+  } else {
+    let queryStr = JSON.stringify(reqQuery);
+    console.log(queryStr);
+
+    queryStr = queryStr.replace(
+      /\b(gt|gte|lt|lte|in)\b/g,
+      (match) => `$${match}`
+    );
+
+    console.log(queryStr);
+    query = JSON.parse(queryStr);
+
+    const hotels = await Hotel.find(query);
+
+    res.status(200).json({
+      success: true,
+      data: hotels,
+    });
+  }
 });
 
 exports.addNewHotel = asyncHandler(async (req, res, next) => {
@@ -72,7 +91,7 @@ exports.updateHotelById = asyncHandler(async (req, res, next) => {
   let hotel = await Hotel.findById(req.params.id);
   if (!hotel) {
     return next(
-      ErrorResponse(`Hotel with id ${req.params.id} was not found`, 404)
+      new ErrorResponse(`Hotel with id ${req.params.id} was not found`, 404)
     );
   }
   hotel = await Hotel.findByIdAndUpdate(req.params.id, req.body, {

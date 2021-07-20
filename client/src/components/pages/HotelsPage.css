@@ -1,0 +1,26 @@
+.hotels-list{
+
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(300px,350fr));
+    grid-gap: 1rem;
+    margin-top:2em;
+    padding:40px;
+  
+
+}
+.hotels-filter-sort{
+    background-color: #fff;
+    
+}   
+.hotels__price-filter span{
+    display: flex;
+}
+
+.hotels-filter-sort{
+    display: grid;
+    grid-template-columns: 50% 50%;
+    padding: 20px 40px;
+    grid-gap:1.5em;
+
+
+}
