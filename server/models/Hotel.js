@@ -9,6 +9,8 @@ const hotelSchema = mongoose.Schema({
   rating: {
     type: Number,
     required: [true, "Please provide a rating for a bootcamp"],
+    min: 0,
+    max: 5,
   },
   price: {
     type: Number,
@@ -20,6 +22,6 @@ const hotelSchema = mongoose.Schema({
   },
 });
 
-const Hotel = mongoose.model("Hotel, hotelSchema");
+const Hotel = mongoose.model("Hotel", hotelSchema);
 
 module.exports = Hotel;
