@@ -1,18 +1,19 @@
-.star-rating-container{
-    margin-top: 5px;
+.star-rating-container {
+  margin-top: 5px;
 }
-.star-rating{
-    margin-top:3px;
-    display: flex;
-    align-items: center;
+.star-rating {
+  margin-top: 1px;
+  display: flex;
+  align-items: center;
 }
-.star-rating p{
-    font-size:1.1em;
-    margin-right: 3px;
-    font-weight: 600;
-    color:rgb(250, 96, 7);
+.star-rating p {
+  font-size: 1.1em;
+  margin-right: 3px;
+  font-weight: 600;
+  color: rgb(250, 96, 7);
 }
-.ratedStar,.star-rating, .star-rating svg{
-    
-    color:rgb(241, 182, 21);
+.ratedStar,
+.star-rating,
+.star-rating svg {
+  color: rgb(241, 182, 21);
 }

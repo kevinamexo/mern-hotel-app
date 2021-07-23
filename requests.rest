@@ -5,5 +5,5 @@ Content-Type: application/json
 
 
 ###
-GET http://localhost:8000/api/v1/hotels/?pricesqqwef[gte]=106&price[lte]=290
+GET http://localhost:8000/api/v1/hotels?sort=-price
 Content-Type: application/json

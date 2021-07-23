@@ -13,10 +13,10 @@ exports.getAllHotels = asyncHandler(async (req, res, next) => {
 
   ///check if all filters are allowed
 
-  console.log(reqQuery);
+  // console.log(reqQuery);
   let queryKeys = Object.keys(reqQuery);
   let invalidQueryKeys;
-  console.log(queryKeys);
+  // console.log(queryKeys);
 
   queryKeys.forEach((q) => {
     if (!filterKeys.includes(q)) {
@@ -35,10 +35,29 @@ exports.getAllHotels = asyncHandler(async (req, res, next) => {
       (match) => `$${match}`
     );
 
-    console.log(queryStr);
-    query = JSON.parse(queryStr);
+    // console.log(queryStr);
+    query = Hotel.find(JSON.parse(queryStr));
 
-    const hotels = await Hotel.find(query);
+    if (req.query.sort) {
+      let sortQuery = req.query.sort.split(",");
+      let order;
+      sortQuery.forEach((val) => {
+        if (val[0] === "-") {
+          console.log("descending");
+          order = "descrating";
+        } else {
+          console.log("ascending");
+          order = "ascrating";
+        }
+      });
+      sortQueryString = sortQuery.join(" ");
+      console.log(sortQueryString);
+
+      query = query.sort(sortQueryString);
+    } else {
+      query = query.sort("-rating");
+    }
+    const hotels = await query;
 
     res.status(200).json({
       success: true,
