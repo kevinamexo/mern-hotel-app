@@ -12,11 +12,18 @@
     background-color: #fff;
     
 }   
+.hotels__price-filter{
+    display: flex;
+    flex-direction: column;
+    align-items:center;
+}
 .hotels__price-filter span{
     display: flex;
 }
-.hotels__price-filter p{
+.hotels__price-filter p,
+.sort-section p{
     text-align: center;
+    font-weight: bold;
 }
 
 .hotels-filter-sort{
@@ -26,4 +33,12 @@
     grid-gap:1.5em;
 
 
+}
+
+.sort-section{
+    text-align: center;
+}
+
+.hotels__price-filter-slider{
+    max-width: 500px;
 }

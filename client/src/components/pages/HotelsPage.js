@@ -15,17 +15,33 @@ import {
 import "./HotelsPage.css";
 const HotelsPage = () => {
   const [hotels, setHotels] = useState([]);
+  const [uiValues, setUiValues] = useState();
   const [loading, setLoading] = useState(false);
   const [filter, setFilter] = useState("");
 
   const [priceRange, setPriceRange] = useState([25, 200]);
-
+  const [sliderMax, setSliderMax] = useState(1000);
   const location = useLocation();
   const history = useHistory();
   const params = location.search ? location.search : null;
 
   const [sortBy, setSortBy] = useState("");
   const [sortString, setSortString] = useState("");
+
+  const updateUIValues = (uiValues) => {
+    setSliderMax(uiValues.maxPrice);
+
+    if (uiValues.filtering.price) {
+      let priceFilter = uiValues.filtering.price;
+
+      setPriceRange([Number(priceFilter.gte), Number(priceFilter.lte)]);
+    }
+
+    if (uiValues.sorting.rating) {
+      let ratingSort = uiValues.sorting.rating;
+      setSortString(ratingSort);
+    }
+  };
 
   useEffect(() => {
     let query = "";
@@ -69,8 +85,12 @@ const HotelsPage = () => {
             cancelToken: source.token,
           }
         );
+
         setHotels(data.data);
+        updateUIValues(data.uiValues);
+        console.log(priceRange);
         setLoading(false);
+        console.log(data.uiValues);
       } catch (error) {
         if (axios.isCancel(error)) return;
         console.log(error);
@@ -125,15 +145,16 @@ const HotelsPage = () => {
     <>
       <div className="hotels-filter-sort">
         <div className="hotels__price-filter">
-          <p>Filter by Price</p>
+          <p>Filter by Price:</p>
           <Slider
             min={0}
-            max={1000}
+            max={sliderMax}
             value={priceRange}
             valueLabelDisplay="auto"
             disabled={loading}
             onChange={(e, newValue) => setPriceRange(newValue)}
             onChangeCommitted={handleSliderCommitted}
+            className="hotels__price-filter-slider"
           />
           <span>
             <TextField
@@ -162,6 +183,7 @@ const HotelsPage = () => {
           </span>
         </div>
         <div className="sort-section">
+          <p>Sort By:</p>
           <FormControl component="fieldset">
             <RadioGroup
               aria-label="Sort-by"

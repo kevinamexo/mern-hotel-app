@@ -4,6 +4,10 @@ const ErrorResponse = require("../utils/ErrorResponse");
 
 exports.getAllHotels = asyncHandler(async (req, res, next) => {
   let reqQuery;
+  let uiValues = {
+    filtering: {},
+    sorting: {},
+  };
   reqQuery = { ...req.query };
 
   //FILTER THEN SORT
@@ -15,14 +19,21 @@ exports.getAllHotels = asyncHandler(async (req, res, next) => {
 
   // console.log(reqQuery);
   let queryKeys = Object.keys(reqQuery);
+  let queryValues = Object.values(reqQuery);
+
+  console.log(queryKeys);
+  console.log(queryValues);
+
   let invalidQueryKeys;
   // console.log(queryKeys);
 
-  queryKeys.forEach((q) => {
+  queryKeys.forEach((q, idx) => {
     if (!filterKeys.includes(q)) {
       invalidQueryKeys = true;
     }
+    uiValues.filtering[q] = queryValues[idx];
   });
+  console.log(uiValues);
 
   if (invalidQueryKeys === true) {
     return next(new ErrorResponse("Filter parameter Not found", 404));
@@ -49,6 +60,7 @@ exports.getAllHotels = asyncHandler(async (req, res, next) => {
           console.log("ascending");
           order = "ascrating";
         }
+        uiValues.sorting[val.replace("-", "")] = order;
       });
       sortQueryString = sortQuery.join(" ");
       console.log(sortQueryString);
@@ -57,11 +69,27 @@ exports.getAllHotels = asyncHandler(async (req, res, next) => {
     } else {
       query = query.sort("-rating");
     }
+
     const hotels = await query;
+
+    const maxPrice = await Hotel.find()
+      .sort({ price: -1 })
+      .limit(1)
+      .select("-_id price");
+    const minPrice = await Hotel.find()
+      .sort({ price: 1 })
+      .limit(1)
+      .select("-_id price");
+
+    uiValues.maxPrice = maxPrice[0].price;
+    uiValues.minPrice = minPrice[0].price;
+
+    console.log(uiValues);
 
     res.status(200).json({
       success: true,
       data: hotels,
+      uiValues,
     });
   }
 });
