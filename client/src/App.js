@@ -10,6 +10,7 @@ function App() {
       <Navbar />
       <Switch>
         <Route exact path="/" component={HotelsPage} />
+        <Route exact path="/hotels" component={HotelsPage} />
       </Switch>
     </div>
   );

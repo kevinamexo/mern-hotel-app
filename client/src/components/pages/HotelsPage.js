@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from "react";
-import { useHistory, useLocation } from "react-router-dom";
+import { useHistory, useLocation, useParams } from "react-router-dom";
 import axios from "axios";
 import HotelCard from "./HotelCard";
 import queryString from "query-string";
@@ -20,38 +20,48 @@ const HotelsPage = () => {
 
   const [priceRange, setPriceRange] = useState([25, 200]);
 
-  const history = useHistory();
   const location = useLocation();
-  const { search } = useLocation;
+  const history = useHistory();
   const params = location.search ? location.search : null;
-  const values = queryString.parse(params);
 
   const [sortBy, setSortBy] = useState("");
   const [sortString, setSortString] = useState("");
+
   useEffect(() => {
-    console.log(values);
     let query = "";
+
     const source = axios.CancelToken.source();
     let cancel;
     const fetchHotelsData = async () => {
+      const parsed = queryString.parse(location.search);
+      console.log(parsed);
       setLoading(true);
       try {
-        // console.log(params);
-        if (params && !filter) {
-          query = params;
+        if (location.search && !filter) {
+          query = location.search;
         } else {
           query = filter;
         }
 
+        let parsedQuery;
         if (sortBy) {
           if (query.length === 0) {
             query = `?sort=${sortBy}`;
           } else {
-            query = query + "&sort=" + sortBy;
+            parsedQuery = queryString.parse(query);
+
+            if (parsedQuery["sort"]) {
+              console.log("sort already applied");
+              parsedQuery["sort"] = sortBy;
+              query = `?${queryString.stringify(parsedQuery)}`;
+            } else {
+              query = query + `&sort=${sortBy}`;
+            }
           }
         }
+        history.push("/hotels" + query);
 
-        history.push(query);
+        /**https://stackoverflow.com/questions/54181169/how-to-update-query-param-in-url-in-react**/
 
         const { data } = await axios.get(
           `http://localhost:8000/api/v1/hotels${query}`,
@@ -59,10 +69,8 @@ const HotelsPage = () => {
             cancelToken: source.token,
           }
         );
-
         setHotels(data.data);
         setLoading(false);
-        console.log(values);
       } catch (error) {
         if (axios.isCancel(error)) return;
         console.log(error);
@@ -103,6 +111,7 @@ const HotelsPage = () => {
 
   const handleSortChange = (e) => {
     setSortString(e.target.value);
+
     if (e.target.value === "ascrating") {
       console.log("Ratings in ascending order");
       setSortBy("rating");
@@ -112,16 +121,11 @@ const HotelsPage = () => {
     }
   };
 
-
-  {
-    /** IF SORT (from parsed url) ===SORTBY* return, then return, else remove sort from query params, and update with new sort from radio  button */
-  
-    https://stackoverflow.com/questions/54181169/how-to-update-query-param-in-url-in-react
-  }
   return (
     <>
       <div className="hotels-filter-sort">
         <div className="hotels__price-filter">
+          <p>Filter by Price</p>
           <Slider
             min={0}
             max={1000}

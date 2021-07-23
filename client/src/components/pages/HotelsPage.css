@@ -15,6 +15,9 @@
 .hotels__price-filter span{
     display: flex;
 }
+.hotels__price-filter p{
+    text-align: center;
+}
 
 .hotels-filter-sort{
     display: grid;
