@@ -7,12 +7,13 @@ exports.getAllHotels = asyncHandler(async (req, res, next) => {
   let uiValues = {
     filtering: {},
     sorting: {},
+    search_query: {},
   };
   reqQuery = { ...req.query };
 
   //FILTER THEN SORT
   const removeBeforeFilter = ["sort"];
-  const filterKeys = ["price"];
+  const filterKeys = ["price", "search_query"];
   removeBeforeFilter.forEach((r) => delete reqQuery[r]);
 
   ///check if all filters are allowed
@@ -39,15 +40,25 @@ exports.getAllHotels = asyncHandler(async (req, res, next) => {
     return next(new ErrorResponse("Filter parameter Not found", 404));
   } else {
     let queryStr = JSON.stringify(reqQuery);
-    console.log(queryStr);
+    console.log("QS" + queryStr);
 
-    queryStr = queryStr.replace(
-      /\b(gt|gte|lt|lte|in)\b/g,
-      (match) => `$${match}`
-    );
+    if (queryKeys[0] === "search_query") {
+      console.log("Search Query");
+      queryStr = queryStr.replace("search_query", "name");
+      console.log(queryStr);
+      queryStr = JSON.parse(queryStr);
+    } else {
+      queryStr = queryStr.replace(
+        /\b(gt|gte|lt|lte|in)\b/g,
+        (match) => `$${match}`
+      );
+      console.log(queryStr);
+      queryStr = JSON.parse(queryStr);
+      console.log(queryStr);
+    }
 
     // console.log(queryStr);
-    query = Hotel.find(JSON.parse(queryStr));
+    query = Hotel.find({ name: "g" });
 
     if (req.query.sort) {
       let sortQuery = req.query.sort.split(",");

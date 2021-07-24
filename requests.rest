@@ -5,5 +5,5 @@ Content-Type: application/json
 
 
 ###
-GET http://localhost:8000/api/v1/hotels?sort=-price
+GET http://localhost:8000/api/v1/hotels?search_query=geneva
 Content-Type: application/json
