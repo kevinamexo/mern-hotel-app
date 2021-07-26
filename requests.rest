@@ -2,8 +2,6 @@
 GET http://localhost:8000/api/v1/hotels
 Content-Type: application/json
 
-
-
 {"price":{"$gte":"11","$lte":"109"}}
 
 
@@ -18,5 +16,9 @@ Content-Type: application/json
 
 
 ###
-GET http://localhost:8000/api/v1/hotels/search?search_query=gen
+GET http://localhost:8000/api/v1/hotels/search?search_query=ge&price[gte]=1&price[lte]=599&sort=-rating
 Content-Type: application/json
+
+
+##
+GET http://localhost:8000/api/v1/hotels/search

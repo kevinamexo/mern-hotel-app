@@ -62,7 +62,7 @@ exports.getAllHotels = asyncHandler(async (req, res, next) => {
       console.log(queryStr);
     }
 
-    // console.log(queryStr);
+    console.log(queryStr.price);
     query = Hotel.find(queryStr);
 
     if (req.query.sort) {
@@ -172,19 +172,64 @@ exports.updateHotelById = asyncHandler(async (req, res, next) => {
 });
 
 exports.searchController = asyncHandler(async (req, res, next) => {
-  //parse the searchQuery
+  let uiValues = {
+    filtering: {},
+    sorting: {},
+    search_query: {},
+  };
+
   let searchQuery = { ...req.query };
+  //parse the searchQuery
+  const removeBeforeFilter = ["sort"];
+  const filterKeys = ["price", "search_query"];
+  removeBeforeFilter.forEach((r) => delete searchQuery[r]);
+
   let searchTerm = searchQuery.search_query;
-  console.log(searchTerm);
+
+  searchQueryStr = JSON.stringify(searchQuery);
+
+  searchQueryStr = searchQueryStr.replace(
+    /\b(gt|gte|lt|lte|in)\b/g,
+    (match) => `$${match}`
+  );
+
+  let searchFilterQuery = JSON.parse(searchQueryStr);
+
+  let invalidQueryKeys;
 
   let term = new RegExp(`${searchTerm}`, "i"); //=/
   console.log(term);
 
-  const hotels = await Hotel.find({ name: { $regex: term } });
+  const pr = searchQuery.price;
+
+  let finalQuery = {
+    $and: [{ name: { $regex: term } }, { price: searchFilterQuery.price }],
+  };
+
+  console.log("pp " + finalQuery);
+
+  let hotels = [];
+  if (!req.query.search_query && !req.query.price && !req.query.sort) {
+    hotels = await Hotel.find();
+  } else if (!req.query.price && req.query.search_query) {
+    hotels = await Hotel.find({ name: { $regex: term } });
+  } else {
+    hotels = await Hotel.find(finalQuery);
+  }
+
+  // const t = await Hotel.find(JSON.parse(searchQuery));
+
+  // console.log(t);
+
+  if (!hotels) {
+    res
+      .status(404)
+      .json({ success: false, message: "No Hotels found", data: [] });
+  }
 
   res.status(200).json({
     success: true,
     data: hotels,
-    q_type: "Search",
+    uiValues,
   });
 });

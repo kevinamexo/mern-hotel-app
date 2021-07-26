@@ -26,6 +26,14 @@
     font-weight: bold;
 }
 
+
+.hotels__priceFilter-header{
+    display:flex;
+    align-items: center;
+}
+.activatePriceSlider{
+    margin-left: 5px;
+}
 .hotels-filter-sort{
     display: grid;
     grid-template-columns: 50% 50%;

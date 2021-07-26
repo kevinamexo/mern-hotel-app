@@ -46,7 +46,9 @@ const Searchbar = () => {
       <button
         className="navbar-searchBtn"
         onClick={() => {
-          history.push(`?search_query=${search}`);
+          if (search) {
+            history.push(`?search_query=${search}`);
+          }
         }}
       >
         Search
