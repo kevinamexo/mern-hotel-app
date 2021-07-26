@@ -6,7 +6,6 @@ import { useLocation, useHistory } from "react-router-dom";
 import "./Searchbar.css";
 
 const Searchbar = () => {
-  const { searchValue, setSearchValue } = useSearchContext();
   const [search, setSearch] = useState("");
   const [searchFocus, setSearchFocus] = useState(false);
   const searchInput = useRef();
@@ -27,7 +26,11 @@ const Searchbar = () => {
   }, []);
 
   return (
-    <form className="navbar-search" onFocus={() => setSearchFocus(true)}>
+    <form
+      className="navbar-search"
+      onFocus={() => setSearchFocus(true)}
+      onSubmit={(e) => e.preventDefault()}
+    >
       <span className={searchFocus ? "hidden" : "navbar-search-icon"}>
         <AiOutlineSearch />
       </span>

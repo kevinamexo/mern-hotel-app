@@ -26,11 +26,11 @@ const HotelsPage = () => {
   const history = useHistory();
   const params = location.search ? location.search : null;
   const url = location.search;
+  const searchTerm = queryString.parse(params).search_query;
 
   const [sortBy, setSortBy] = useState("");
   const [sortString, setSortString] = useState("");
 
-  const { searchValue } = useSearchContext();
   const updateUIValues = (uiValues) => {
     setSliderMax(uiValues.maxPrice);
 
@@ -47,14 +47,13 @@ const HotelsPage = () => {
   };
 
   useEffect(() => {
+    console.log(searchTerm);
     let query = "";
 
     const source = axios.CancelToken.source();
     let cancel;
     const fetchHotelsData = async () => {
       const parsed = queryString.parse(location.search);
-      console.log(parsed);
-      console.log(location.search);
       setLoading(true);
       try {
         if (location.search && !filter) {
@@ -79,6 +78,7 @@ const HotelsPage = () => {
             }
           }
         }
+        console.log(query);
 
         history.push("/hotels" + query);
 
@@ -218,6 +218,7 @@ const HotelsPage = () => {
         </div>
       </div>
       <div className="hotels-list">
+        {searchTerm && <h3>{`Showing results for: "${searchTerm}"`}</h3>}
         {loading ? (
           <h1>Loading...</h1>
         ) : (

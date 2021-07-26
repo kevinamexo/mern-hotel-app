@@ -183,6 +183,8 @@ exports.searchController = asyncHandler(async (req, res, next) => {
   const hotels = await Hotel.find({ name: { $regex: term } });
 
   res.status(200).json({
+    success: true,
     data: hotels,
+    q_type: "Search",
   });
 });
