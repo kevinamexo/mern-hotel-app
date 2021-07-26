@@ -6,10 +6,10 @@ import { BrowserRouter as Router } from "react-router-dom";
 import { SearchContextProvider } from "./context/SearchContext";
 
 ReactDOM.render(
-  <Router>
-    <SearchContextProvider>
+  <SearchContextProvider>
+    <Router>
       <App />
-    </SearchContextProvider>
-  </Router>,
+    </Router>
+  </SearchContextProvider>,
   document.getElementById("root")
 );

@@ -7,6 +7,8 @@ router
   .get(hotelControllers.getAllHotels)
   .post(hotelControllers.addNewHotel);
 
+router.route("/search").get(hotelControllers.searchController);
+
 router
   .route("/:id")
   .put(hotelControllers.updateHotelById)

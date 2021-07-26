@@ -4,6 +4,19 @@ Content-Type: application/json
 
 
 
+{"price":{"$gte":"11","$lte":"109"}}
+
+
+###
+GET http://localhost:8000/api/v1/hotels?search_query=g
+Content-Type: application/json
+
+
 ###
 GET http://localhost:8000/api/v1/hotels?search_query=geneva
+Content-Type: application/json
+
+
+###
+GET http://localhost:8000/api/v1/hotels/search?search_query=gen
 Content-Type: application/json

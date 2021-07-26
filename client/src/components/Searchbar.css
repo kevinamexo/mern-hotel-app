@@ -42,3 +42,14 @@
   display: flex;
   align-items: center;
 }
+
+.navbar-searchBtn {
+  outline: none;
+  border: none;
+  background: rgb(7, 7, 196);
+  color: #fff;
+  height: 100%;
+  padding: 0 10px;
+  border-radius: 0 5px 5px 0;
+  font-size: 1.1em;
+}

@@ -3,6 +3,7 @@ const asyncHandler = require("../middleware/asyncHandler");
 const ErrorResponse = require("../utils/ErrorResponse");
 
 exports.getAllHotels = asyncHandler(async (req, res, next) => {
+  let query;
   let reqQuery;
   let uiValues = {
     filtering: {},
@@ -43,10 +44,14 @@ exports.getAllHotels = asyncHandler(async (req, res, next) => {
     console.log("QS" + queryStr);
 
     if (queryKeys[0] === "search_query") {
-      console.log("Search Query");
-      queryStr = queryStr.replace("search_query", "name");
-      console.log(queryStr);
-      queryStr = JSON.parse(queryStr);
+      let searchQuery = { ...req.query };
+      let searchTerm = searchQuery.search_query;
+      console.log(searchTerm);
+
+      let term = new RegExp(`${searchTerm}`, "i"); //=/
+      console.log(term);
+
+      query = Hotel.find({ name: { $regex: term } });
     } else {
       queryStr = queryStr.replace(
         /\b(gt|gte|lt|lte|in)\b/g,
@@ -58,7 +63,7 @@ exports.getAllHotels = asyncHandler(async (req, res, next) => {
     }
 
     // console.log(queryStr);
-    query = Hotel.find({ name: "g" });
+    query = Hotel.find(queryStr);
 
     if (req.query.sort) {
       let sortQuery = req.query.sort.split(",");
@@ -80,6 +85,8 @@ exports.getAllHotels = asyncHandler(async (req, res, next) => {
     } else {
       query = query.sort("-rating");
     }
+
+    console.log("QUERY: " + query);
 
     const hotels = await query;
 
@@ -161,5 +168,21 @@ exports.updateHotelById = asyncHandler(async (req, res, next) => {
     success: true,
     message: `${hotel.name} updated`,
     data: hotel,
+  });
+});
+
+exports.searchController = asyncHandler(async (req, res, next) => {
+  //parse the searchQuery
+  let searchQuery = { ...req.query };
+  let searchTerm = searchQuery.search_query;
+  console.log(searchTerm);
+
+  let term = new RegExp(`${searchTerm}`, "i"); //=/
+  console.log(term);
+
+  const hotels = await Hotel.find({ name: { $regex: term } });
+
+  res.status(200).json({
+    data: hotels,
   });
 });

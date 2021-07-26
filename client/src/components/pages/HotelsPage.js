@@ -1,5 +1,6 @@
 import React, { useState, useEffect } from "react";
 import { useHistory, useLocation, useParams } from "react-router-dom";
+import { useSearchContext } from "../../context/SearchContext";
 import axios from "axios";
 import HotelCard from "./HotelCard";
 import queryString from "query-string";
@@ -24,10 +25,12 @@ const HotelsPage = () => {
   const location = useLocation();
   const history = useHistory();
   const params = location.search ? location.search : null;
+  const url = location.search;
 
   const [sortBy, setSortBy] = useState("");
   const [sortString, setSortString] = useState("");
 
+  const { searchValue } = useSearchContext();
   const updateUIValues = (uiValues) => {
     setSliderMax(uiValues.maxPrice);
 
@@ -51,6 +54,7 @@ const HotelsPage = () => {
     const fetchHotelsData = async () => {
       const parsed = queryString.parse(location.search);
       console.log(parsed);
+      console.log(location.search);
       setLoading(true);
       try {
         if (location.search && !filter) {
@@ -75,16 +79,22 @@ const HotelsPage = () => {
             }
           }
         }
+
         history.push("/hotels" + query);
 
         /**https://stackoverflow.com/questions/54181169/how-to-update-query-param-in-url-in-react**/
 
-        const { data } = await axios.get(
-          `http://localhost:8000/api/v1/hotels${query}`,
-          {
-            cancelToken: source.token,
-          }
-        );
+        let url = `http://localhost:8000/api/v1/hotels${
+          parsed.search_query
+            ? "/search" + location.search
+            : "" + location.search
+        }`;
+        console.log(url);
+        console.log(location.search);
+
+        const { data } = await axios.get(url, {
+          cancelToken: source.token,
+        });
 
         setHotels(data.data);
         updateUIValues(data.uiValues);
@@ -103,7 +113,7 @@ const HotelsPage = () => {
     return () => {
       source.cancel();
     };
-  }, [filter, sortBy]);
+  }, [filter, sortBy, url]);
 
   const handlePriceInputChange = (e, type) => {
     let newRange;
